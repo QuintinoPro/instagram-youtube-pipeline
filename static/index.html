@@ -9,19 +9,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg:        #0a1628;
-      --surface:   #111e35;
-      --border:    #1d2f4a;
+      --bg:        #060609;
+      --surface:   #0c0f18;
+      --border:    #16202e;
       --teal:      #169d94;
       --teal-dim:  rgba(22,157,148,0.08);
       --teal-glow: rgba(22,157,148,0.20);
-      --blue:      #3b6eec;
+      --blue:      #1c51d5;
       --green:     #21c560;
+      --green-dim: rgba(33,197,96,0.10);
+      --green-glow:rgba(33,197,96,0.22);
       --lima:      #b6e72e;
       --red:       #f87171;
-      --text:      #e2e8f0;
-      --muted:     #4a6080;
-      --dim:       #1d2f4a;
+      --text:      #f0f4ff;
+      --muted:     #52657d;
+      --dim:       #16202e;
     }
 
     * { box-sizing: border-box; margin: 0; }
@@ -40,7 +42,7 @@
     /* ── Header ── */
     header {
       border-bottom: 1px solid var(--border);
-      background: rgba(10,22,40,0.92);
+      background: rgba(6,6,9,0.96);
       backdrop-filter: blur(12px);
       position: sticky; top: 0; z-index: 20;
     }
@@ -107,22 +109,22 @@
     .btn {
       font-family: 'Inter', sans-serif;
       font-size: 13px; font-weight: 600; letter-spacing: 0.01em;
-      padding: 10px 20px;
-      border-radius: 8px;
+      padding: 10px 22px;
+      border-radius: 9999px;
       border: 1px solid transparent;
       display: inline-flex; align-items: center; gap: 8px;
-      cursor: pointer; transition: all 0.15s;
+      cursor: pointer; transition: all 0.18s;
     }
     .btn:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
 
     .btn-teal {
-      background: var(--teal);
+      background: var(--green);
       color: #fff;
-      border-color: var(--teal);
+      border-color: var(--green);
     }
     .btn-teal:hover:not(:disabled) {
-      background: #1ab8ae;
-      box-shadow: 0 2px 12px var(--teal-glow);
+      background: #27de6e;
+      box-shadow: 0 4px 20px var(--green-glow);
       transform: translateY(-1px);
     }
     .btn-teal:active:not(:disabled) { transform: scale(0.97); }
@@ -131,9 +133,10 @@
       background: rgba(255,255,255,0.04);
       color: var(--text);
       border-color: var(--border);
+      border-radius: 9999px;
     }
     .btn-ghost:hover:not(:disabled) {
-      background: rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.08);
       border-color: var(--muted);
     }
 
@@ -141,7 +144,7 @@
       background: rgba(248,113,113,0.06);
       color: var(--red);
       border-color: rgba(248,113,113,0.25);
-      border-radius: 8px;
+      border-radius: 9999px;
     }
     .btn-danger:hover:not(:disabled) {
       background: rgba(248,113,113,0.12);
@@ -171,7 +174,7 @@
     }
     .quota-fill {
       height: 100%;
-      background: var(--teal);
+      background: linear-gradient(90deg, var(--teal), var(--green));
       transition: width 0.6s ease;
     }
 
@@ -325,7 +328,7 @@
       font-size: 14px; font-weight: 700; transition: all .15s;
     }
     .vpd-btn:hover { color: var(--text); border-color: var(--muted); }
-    .vpd-btn.vpd-active { background: var(--teal-dim); border-color: var(--teal); color: var(--teal); }
+    .vpd-btn.vpd-active { background: var(--green-dim); border-color: var(--green); color: var(--green); }
 
     .slot-row { transition: opacity .15s, max-height .2s; }
     .time-inputs { display: flex; gap: 8px; align-items: center; }
@@ -600,7 +603,7 @@
     <div style="display:flex;align-items:center;justify-content:flex-end;gap:14px;margin-top:8px;">
       <span id="settings-saved">Salvo!</span>
       <button onclick="closeSettings()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:8px 16px;color:var(--muted);cursor:pointer;font-size:12px;font-weight:600;">Cancelar</button>
-      <button onclick="saveSettings()" style="background:var(--teal);border:none;border-radius:6px;padding:8px 18px;color:#fff;cursor:pointer;font-size:12px;font-weight:700;">Salvar</button>
+      <button onclick="saveSettings()" style="background:var(--green);border:none;border-radius:9999px;padding:8px 22px;color:#fff;cursor:pointer;font-size:12px;font-weight:700;">Salvar</button>
     </div>
   </div>
 </div>
@@ -928,7 +931,7 @@ function renderTable() {
     const badge = badges[v.status] || `<span style="color:var(--muted);font-size:11px;">${esc(v.status)}</span>`;
     const pub   = v.youtube_publish_at || '—';
     const link  = v.youtube_url
-      ? `<a href="${esc(v.youtube_url)}" target="_blank" rel="noopener noreferrer" style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--teal);text-decoration:none;font-family:'Syne',sans-serif;">Abrir ↗</a>`
+      ? `<a href="${esc(v.youtube_url)}" target="_blank" rel="noopener noreferrer" style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--teal);text-decoration:none;font-family:'Inter',sans-serif;">Abrir ↗</a>`
       : '<span style="color:var(--muted);font-size:11px;">—</span>';
     const cap = esc(v.caption || '—');
     return `
