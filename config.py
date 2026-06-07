@@ -34,6 +34,20 @@ def _get_int(key: str, default: int) -> int:
         return default
 
 
+def get_daily_slots() -> list[tuple[int, int]]:
+    """Retorna lista de (hora, minuto) UTC para publicação diária. Lido em tempo real."""
+    s = _load_settings()
+    if "DAILY_SLOTS" in s and s["DAILY_SLOTS"]:
+        try:
+            return [(int(slot[0]), int(slot[1])) for slot in s["DAILY_SLOTS"]]
+        except Exception:
+            pass
+    # Backward compat: usa UPLOAD_HOUR/UPLOAD_MINUTE
+    hour = int(s.get("UPLOAD_HOUR") or os.getenv("UPLOAD_HOUR", "13"))
+    minute = int(s.get("UPLOAD_MINUTE") or os.getenv("UPLOAD_MINUTE", "0"))
+    return [(hour, minute)]
+
+
 # Instagram
 INSTAGRAM_SESSION_ID = _get("INSTAGRAM_SESSION_ID", "")
 TARGET_INSTAGRAM_PROFILE = _get("TARGET_INSTAGRAM_PROFILE", "")

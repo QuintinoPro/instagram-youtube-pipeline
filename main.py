@@ -63,13 +63,13 @@ def cmd_status() -> None:
     uploaded = counts.get("uploaded", 0)
     errors = counts.get("error", 0)
 
-    print(f"\n{'─'*50}")
+    print(f"\n{'-'*50}")
     print(f"  Total registrado : {len(records)}")
     print(f"  Aguardando upload: {pending_upload}")
     print(f"  Agendados YouTube: {scheduled}")
     print(f"  Publicados       : {uploaded}")
     print(f"  Erros            : {errors}")
-    print(f"{'─'*50}")
+    print(f"{'-'*50}")
 
     sched_list = metadata_manager.get_scheduled()
     if sched_list:

@@ -125,29 +125,29 @@ def sync_published() -> int:
 def next_publish_slot(scheduled: list[dict]) -> datetime:
     """
     Calcula o próximo slot de publicação disponível.
-    1 vídeo/dia no horário definido em config (UTC).
+    Suporta N vídeos/dia conforme DAILY_SLOTS em config (UTC).
     """
-    from datetime import timedelta
+    from datetime import timedelta, date as date_type
 
-    today = datetime.now(timezone.utc).replace(
-        hour=config.UPLOAD_HOUR,
-        minute=config.UPLOAD_MINUTE,
-        second=0,
-        microsecond=0,
-    )
+    slots = config.get_daily_slots()  # [(hora, minuto), ...]
+    now = datetime.now(timezone.utc)
 
-    occupied = set()
+    # Ocupados: conjunto de (date, hour) já agendados
+    occupied: set[tuple[date_type, int]] = set()
     for r in scheduled:
         if r.get("youtube_publish_at"):
             dt = datetime.fromisoformat(r["youtube_publish_at"].replace("Z", "+00:00"))
-            occupied.add(dt.date())
+            occupied.add((dt.date(), dt.hour))
 
-    candidate = today
-    # Se o horário de hoje já passou, começa amanhã
-    if candidate <= datetime.now(timezone.utc):
-        candidate += timedelta(days=1)
+    candidate_date = now.date()
+    for _ in range(365):
+        for hour, minute in slots:
+            candidate = datetime(
+                candidate_date.year, candidate_date.month, candidate_date.day,
+                hour, minute, 0, tzinfo=timezone.utc,
+            )
+            if candidate > now and (candidate_date, hour) not in occupied:
+                return candidate
+        candidate_date += timedelta(days=1)
 
-    while candidate.date() in occupied:
-        candidate += timedelta(days=1)
-
-    return candidate
+    return now + timedelta(days=7)

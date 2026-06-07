@@ -321,6 +321,21 @@
       display: none; font-size: 11px; color: var(--green);
       font-weight: 600; letter-spacing: 0.04em;
     }
+
+    /* ── Videos per day selector ── */
+    .vpd-btn {
+      width: 44px; height: 36px;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--muted); cursor: pointer; font-family: 'Syne', sans-serif;
+      font-size: 14px; font-weight: 700; transition: all .15s;
+    }
+    .vpd-btn:hover { color: var(--text); border-color: var(--muted); }
+    .vpd-btn.vpd-active { background: var(--amber-dim); border-color: var(--amber); color: var(--amber); }
+
+    .slot-row { transition: opacity .15s, max-height .2s; }
+    .time-inputs { display: flex; gap: 8px; align-items: center; }
+    .time-inputs input { width: 68px; }
+    .time-sep { color: var(--muted); font-weight: 700; font-size: 16px; }
   </style>
 </head>
 <body>
@@ -530,16 +545,51 @@
     </div>
 
     <div class="settings-group">
-      <div class="settings-group-title">Agendamento & Limites</div>
+      <div class="settings-group-title">Agendamento</div>
+
+      <div class="field" style="margin-bottom:16px;">
+        <label>Vídeos por dia</label>
+        <div style="display:flex;gap:6px;margin-top:2px;">
+          <button type="button" onclick="setVideosPerDay(1)" id="vpd-1" class="vpd-btn vpd-active">1</button>
+          <button type="button" onclick="setVideosPerDay(2)" id="vpd-2" class="vpd-btn">2</button>
+          <button type="button" onclick="setVideosPerDay(3)" id="vpd-3" class="vpd-btn">3</button>
+        </div>
+      </div>
+
+      <div id="slot-1-row" class="field slot-row">
+        <label>Horário 1 (UTC)</label>
+        <div class="time-inputs">
+          <input id="slot-1-hour"   type="number" min="0" max="23" placeholder="12" />
+          <span class="time-sep">:</span>
+          <input id="slot-1-minute" type="number" min="0" max="59" placeholder="00" />
+          <span class="hint" style="margin-left:4px;">ex: 12:00 = 09h BRT</span>
+        </div>
+      </div>
+
+      <div id="slot-2-row" class="field slot-row" style="display:none;">
+        <label>Horário 2 (UTC)</label>
+        <div class="time-inputs">
+          <input id="slot-2-hour"   type="number" min="0" max="23" placeholder="22" />
+          <span class="time-sep">:</span>
+          <input id="slot-2-minute" type="number" min="0" max="59" placeholder="00" />
+          <span class="hint" style="margin-left:4px;">ex: 22:00 = 19h BRT</span>
+        </div>
+      </div>
+
+      <div id="slot-3-row" class="field slot-row" style="display:none;">
+        <label>Horário 3 (UTC)</label>
+        <div class="time-inputs">
+          <input id="slot-3-hour"   type="number" min="0" max="23" placeholder="2" />
+          <span class="time-sep">:</span>
+          <input id="slot-3-minute" type="number" min="0" max="59" placeholder="00" />
+          <span class="hint" style="margin-left:4px;">ex: 02:00 = 23h BRT</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-group-title">Limites</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        <div class="field">
-          <label>Hora de publicação (UTC)</label>
-          <input id="s-upload-hour" type="number" min="0" max="23" placeholder="13" />
-        </div>
-        <div class="field">
-          <label>Minuto</label>
-          <input id="s-upload-minute" type="number" min="0" max="59" placeholder="0" />
-        </div>
         <div class="field">
           <label>Máx. coleta / run</label>
           <input id="s-max-collect" type="number" min="1" max="100" placeholder="30" />
@@ -564,6 +614,16 @@
 // ── State ────────────────────────────────────────────────────────────────────
 let state = { isRunning: false, currentTask: '', filter: 'all', videos: [], maxUploads: 6 };
 let logOpen = false;
+let _videosPerDay = 1;
+
+function setVideosPerDay(n) {
+  _videosPerDay = n;
+  [1, 2, 3].forEach(i => {
+    document.getElementById(`vpd-${i}`).classList.toggle('vpd-active', i === n);
+    const row = document.getElementById(`slot-${i}-row`);
+    if (row) row.style.display = i <= n ? '' : 'none';
+  });
+}
 
 // ── Config ───────────────────────────────────────────────────────────────────
 async function loadConfig() {
@@ -590,19 +650,25 @@ async function openSettings() {
   try {
     const r = await fetch('/api/settings');
     const s = await r.json();
-    document.getElementById('s-brand-name').value    = s.PIPELINE_BRAND_NAME || '';
-    document.getElementById('s-brand-logo').value    = s.PIPELINE_BRAND_LOGO || '';
-    document.getElementById('s-title').value         = s.PIPELINE_TITLE || '';
-    document.getElementById('s-ig-profile').value    = s.TARGET_INSTAGRAM_PROFILE || '';
-    document.getElementById('s-session-id').value    = s.INSTAGRAM_SESSION_ID || '';
-    document.getElementById('s-upload-hour').value   = s.UPLOAD_HOUR ?? 13;
-    document.getElementById('s-upload-minute').value = s.UPLOAD_MINUTE ?? 0;
-    document.getElementById('s-max-collect').value   = s.MAX_COLLECT_PER_RUN ?? 30;
-    document.getElementById('s-max-uploads').value   = s.MAX_UPLOADS_PER_RUN ?? 6;
+    document.getElementById('s-brand-name').value = s.PIPELINE_BRAND_NAME || '';
+    document.getElementById('s-brand-logo').value = s.PIPELINE_BRAND_LOGO || '';
+    document.getElementById('s-title').value       = s.PIPELINE_TITLE || '';
+    document.getElementById('s-ig-profile').value  = s.TARGET_INSTAGRAM_PROFILE || '';
+    document.getElementById('s-session-id').value  = s.INSTAGRAM_SESSION_ID || '';
+    document.getElementById('s-max-collect').value = s.MAX_COLLECT_PER_RUN ?? 30;
+    document.getElementById('s-max-uploads').value = s.MAX_UPLOADS_PER_RUN ?? 6;
+
+    const slots = (s.DAILY_SLOTS && s.DAILY_SLOTS.length) ? s.DAILY_SLOTS : [[13, 0]];
+    setVideosPerDay(slots.length);
+    slots.forEach(([h, m], i) => {
+      const hi = document.getElementById(`slot-${i+1}-hour`);
+      const mi = document.getElementById(`slot-${i+1}-minute`);
+      if (hi) hi.value = h;
+      if (mi) mi.value = m;
+    });
   } catch (e) {}
   document.getElementById('settings-saved').style.display = 'none';
   document.getElementById('settings-modal').classList.add('open');
-  // Auto-focus no primeiro campo após a animação
   setTimeout(() => document.getElementById('s-brand-name').focus(), 80);
 }
 
@@ -626,14 +692,20 @@ function toggleSessionVisibility() {
 }
 
 async function saveSettings() {
+  const slots = [];
+  for (let i = 1; i <= _videosPerDay; i++) {
+    const h = parseInt(document.getElementById(`slot-${i}-hour`).value);
+    const m = parseInt(document.getElementById(`slot-${i}-minute`).value);
+    slots.push([isNaN(h) ? 13 : h, isNaN(m) ? 0 : m]);
+  }
+
   const payload = {
     PIPELINE_BRAND_NAME:      document.getElementById('s-brand-name').value.trim(),
     PIPELINE_BRAND_LOGO:      document.getElementById('s-brand-logo').value.trim(),
     PIPELINE_TITLE:           document.getElementById('s-title').value.trim(),
     TARGET_INSTAGRAM_PROFILE: document.getElementById('s-ig-profile').value.trim(),
     INSTAGRAM_SESSION_ID:     document.getElementById('s-session-id').value.trim(),
-    UPLOAD_HOUR:              parseInt(document.getElementById('s-upload-hour').value) || 13,
-    UPLOAD_MINUTE:            parseInt(document.getElementById('s-upload-minute').value) || 0,
+    DAILY_SLOTS:              slots,
     MAX_COLLECT_PER_RUN:      parseInt(document.getElementById('s-max-collect').value) || 30,
     MAX_UPLOADS_PER_RUN:      parseInt(document.getElementById('s-max-uploads').value) || 6,
   };

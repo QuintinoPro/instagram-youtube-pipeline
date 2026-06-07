@@ -162,8 +162,7 @@ class SettingsPayload(BaseModel):
     PIPELINE_TITLE:           str = ""
     TARGET_INSTAGRAM_PROFILE: str = ""
     INSTAGRAM_SESSION_ID:     str = ""
-    UPLOAD_HOUR:              int = 13
-    UPLOAD_MINUTE:            int = 0
+    DAILY_SLOTS:              list[list[int]] = [[13, 0]]
     MAX_COLLECT_PER_RUN:      int = 30
     MAX_UPLOADS_PER_RUN:      int = 6
 
@@ -175,14 +174,21 @@ def get_settings():
     s = config._load_settings()
     def v(key, default):
         return s.get(key) or os.getenv(key, default)
+
+    # Monta DAILY_SLOTS: usa o novo campo ou faz backward compat com UPLOAD_HOUR/MINUTE
+    daily_slots = s.get("DAILY_SLOTS")
+    if not daily_slots:
+        hour   = int(s.get("UPLOAD_HOUR")   or os.getenv("UPLOAD_HOUR",   "13"))
+        minute = int(s.get("UPLOAD_MINUTE") or os.getenv("UPLOAD_MINUTE", "0"))
+        daily_slots = [[hour, minute]]
+
     return {
         "PIPELINE_BRAND_NAME":      v("PIPELINE_BRAND_NAME",      "My Pipeline"),
         "PIPELINE_BRAND_LOGO":      v("PIPELINE_BRAND_LOGO",      "YT"),
         "PIPELINE_TITLE":           v("PIPELINE_TITLE",           "Instagram → YouTube Pipeline"),
         "TARGET_INSTAGRAM_PROFILE": v("TARGET_INSTAGRAM_PROFILE", ""),
         "INSTAGRAM_SESSION_ID":     v("INSTAGRAM_SESSION_ID",     ""),
-        "UPLOAD_HOUR":              int(v("UPLOAD_HOUR",          "13")),
-        "UPLOAD_MINUTE":            int(v("UPLOAD_MINUTE",        "0")),
+        "DAILY_SLOTS":              daily_slots,
         "MAX_COLLECT_PER_RUN":      int(v("MAX_COLLECT_PER_RUN",  "30")),
         "MAX_UPLOADS_PER_RUN":      int(v("MAX_UPLOADS_PER_RUN",  "6")),
     }
