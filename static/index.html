@@ -1,29 +1,30 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" style="color-scheme:dark;">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#000000" />
   <title id="page-title">Pipeline</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg:        #060609;
-      --surface:   #0c0f18;
-      --border:    #16202e;
+      --bg:        #000000;
+      --surface:   #0d0f1a;
+      --border:    #1a1e2e;
       --teal:      #169d94;
       --teal-dim:  rgba(22,157,148,0.08);
       --teal-glow: rgba(22,157,148,0.20);
-      --blue:      #1c51d5;
+      --blue:      #3b82f6;
       --green:     #21c560;
       --green-dim: rgba(33,197,96,0.10);
       --green-glow:rgba(33,197,96,0.22);
       --lima:      #b6e72e;
       --red:       #f87171;
-      --text:      #f0f4ff;
-      --muted:     #52657d;
-      --dim:       #16202e;
+      --text:      #ffffff;
+      --muted:     #6b7280;
+      --dim:       #13162a;
     }
 
     * { box-sizing: border-box; margin: 0; }
@@ -33,8 +34,9 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      /* Subtle noise texture */
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+      background-image:
+        radial-gradient(ellipse 60% 50% at -5% 0%, rgba(33,197,96,0.09) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 35% at 105% 90%, rgba(59,130,246,0.07) 0%, transparent 50%);
     }
 
     .mono { font-family: 'Inter Mono', monospace; }
@@ -42,67 +44,79 @@
     /* ── Header ── */
     header {
       border-bottom: 1px solid var(--border);
-      background: rgba(6,6,9,0.96);
-      backdrop-filter: blur(12px);
+      background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(20px);
       position: sticky; top: 0; z-index: 20;
+      box-shadow: 0 1px 0 var(--border), 0 4px 40px rgba(33,197,96,0.04);
     }
-
-    .header-accent {
-      height: 2px;
-      background: linear-gradient(90deg, var(--teal), transparent 60%);
-    }
-
-    /* .logo-mark removido — substituído por img SVG real */
 
     /* ── Stat Cards ── */
     .stat-card {
-      background: var(--surface);
+      background: linear-gradient(145deg, #0f1220, #0a0c16);
       border: 1px solid var(--border);
-      border-left: 3px solid var(--muted);
-      padding: 20px 22px;
-      transition: border-left-color 0.2s, box-shadow 0.2s;
-      position: relative;
-      overflow: hidden;
+      border-radius: 16px;
+      padding: 22px 24px;
+      position: relative; overflow: hidden;
+      transition: box-shadow 0.25s, border-color 0.25s, transform 0.2s;
     }
-    .stat-card::before {
+    .stat-card::after {
       content: '';
-      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(135deg, transparent 60%, rgba(255,255,255,0.01));
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at top left, rgba(255,255,255,0.03) 0%, transparent 70%);
       pointer-events: none;
     }
-    .stat-card:hover { box-shadow: 0 0 0 1px var(--border), 0 4px 24px rgba(0,0,0,0.4); }
+    .stat-card:hover { transform: translateY(-2px); }
+    .stat-card.blue-card:hover { box-shadow: 0 8px 32px rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.35); }
+    .stat-card.teal:hover      { box-shadow: 0 8px 32px rgba(22,157,148,0.12); border-color: rgba(22,157,148,0.35); }
+    .stat-card.green:hover     { box-shadow: 0 8px 32px rgba(33,197,96,0.12);  border-color: rgba(33,197,96,0.35);  }
+    .stat-card.red:hover       { box-shadow: 0 8px 32px rgba(248,113,113,0.10);border-color: rgba(248,113,113,0.35);}
 
-    .stat-card.blue-card { border-left-color: var(--blue); }
-    .stat-card.teal      { border-left-color: var(--teal); }
-    .stat-card.green     { border-left-color: var(--green); }
-    .stat-card.red       { border-left-color: var(--red); }
-    .stat-card.blue-card:hover { box-shadow: 0 0 20px rgba(59,110,236,0.08); }
-    .stat-card.teal:hover      { box-shadow: 0 0 20px rgba(22,157,148,0.08); }
-    .stat-card.green:hover     { box-shadow: 0 0 20px rgba(33,197,96,0.08); }
-    .stat-card.red:hover       { box-shadow: 0 0 20px rgba(248,113,113,0.06); }
+    .stat-icon {
+      width: 34px; height: 34px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; margin-bottom: 14px; flex-shrink: 0;
+    }
+    .stat-icon.blue  { background: rgba(59,130,246,0.12);  }
+    .stat-icon.teal  { background: rgba(22,157,148,0.12);  }
+    .stat-icon.green { background: rgba(33,197,96,0.12);   }
+    .stat-icon.red   { background: rgba(248,113,113,0.10); }
 
-    .stat-label { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-    .stat-num   { font-size: 2.8rem; font-weight: 800; line-height: 1; }
-    .stat-num.blue-num { color: var(--blue); }
-    .stat-num.teal     { color: var(--teal); }
-    .stat-num.green    { color: var(--green); }
-    .stat-num.red      { color: var(--red); }
+    .stat-label { font-size: 11px; font-weight: 500; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 6px; }
+    .stat-num   { font-size: 2.6rem; font-weight: 800; line-height: 1; color: #fff; letter-spacing: -0.02em; }
+    .stat-num.blue-num { color: var(--blue);  text-shadow: 0 0 28px rgba(59,130,246,0.35); }
+    .stat-num.teal     { color: var(--teal);  text-shadow: 0 0 28px rgba(22,157,148,0.35); }
+    .stat-num.green    { color: var(--green); text-shadow: 0 0 28px rgba(33,197,96,0.30);  }
+    .stat-num.red      { color: var(--red);   text-shadow: 0 0 28px rgba(248,113,113,0.30);}
+    .stat-sub { font-size: 10px; color: var(--muted); margin-top: 6px; }
 
     /* ── Panels ── */
     .panel {
-      background: var(--surface);
+      background: linear-gradient(160deg, #0f1220, #0a0c16);
       border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
     }
 
     .panel-header {
       padding: 14px 20px;
       border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap-8px;
+      display: flex; align-items: center; gap: 8px;
     }
 
+    /* Pill de seção — igual aos labels do site (Blockchain.RIO, Ecosystem) */
     .section-label {
-      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--muted);
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+      color: var(--text);
+      background: #1a1a1a;
+      border: 1px solid #2e2e2e;
+      border-radius: 9999px;
+      padding: 4px 12px 4px 8px;
+    }
+    .section-label::before {
+      content: '';
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green); flex-shrink: 0;
     }
 
     /* ── Buttons ── */
@@ -117,6 +131,25 @@
     }
     .btn:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
 
+    /* Botão CTA — mesmo estilo do site: pill escuro + ícone em caixa colorida */
+    .btn-cta {
+      background: linear-gradient(135deg, #131627, #0d1020);
+      color: #fff;
+      border-color: #232840;
+      padding: 7px 7px 7px 18px;
+      gap: 12px;
+    }
+    .btn-cta:hover:not(:disabled) { background: linear-gradient(135deg, #181d35, #101428); border-color: #2e3550; }
+    .btn-cta:active:not(:disabled) { transform: scale(0.97); }
+    .cta-box {
+      width: 28px; height: 28px; border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; flex-shrink: 0;
+    }
+    .cta-box-green { background: var(--green); color: #000; }
+    .cta-box-blue  { background: var(--blue);  color: #fff; }
+
+    /* Mantido para compatibilidade */
     .btn-teal {
       background: var(--green);
       color: #fff;
@@ -130,14 +163,15 @@
     .btn-teal:active:not(:disabled) { transform: scale(0.97); }
 
     .btn-ghost {
-      background: rgba(255,255,255,0.04);
-      color: var(--text);
-      border-color: var(--border);
+      background: linear-gradient(135deg, #131627, #0d1020);
+      color: var(--muted);
+      border-color: #232840;
       border-radius: 9999px;
     }
     .btn-ghost:hover:not(:disabled) {
-      background: rgba(255,255,255,0.08);
-      border-color: var(--muted);
+      background: linear-gradient(135deg, #181d35, #101428);
+      color: var(--text);
+      border-color: #2e3550;
     }
 
     .btn-danger {
@@ -153,8 +187,9 @@
 
     /* ── Task banner ── */
     .task-banner {
-      background: var(--teal-dim);
-      border: 1px solid rgba(22,157,148,0.2);
+      background: rgba(33,197,96,0.06);
+      border: 1px solid rgba(33,197,96,0.18);
+      border-radius: 10px;
       padding: 10px 16px;
       display: flex; align-items: center; gap: 10px;
       margin-top: 14px;
@@ -181,12 +216,13 @@
     /* ── Badges ── */
     .badge {
       display: inline-flex; align-items: center; gap: 5px;
-      padding: 2px 9px;
+      padding: 3px 10px;
       font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
       text-transform: uppercase;
       border: 1px solid;
+      border-radius: 9999px;
     }
-    .badge-downloaded { color: var(--blue);  border-color: rgba(59,110,236,0.30);  background: rgba(59,110,236,0.08); }
+    .badge-downloaded { color: var(--blue);  border-color: rgba(59,130,246,0.30);  background: rgba(59,130,246,0.08); }
     .badge-scheduled  { color: var(--teal);  border-color: rgba(22,157,148,0.30);  background: rgba(22,157,148,0.08); }
     .badge-uploaded   { color: var(--green); border-color: rgba(33,197,96,0.30);   background: rgba(33,197,96,0.08); }
     .badge-error      { color: var(--red);   border-color: rgba(248,113,113,0.25); background: rgba(248,113,113,0.06); }
@@ -198,7 +234,7 @@
       padding: 10px 16px; border-bottom: 1px solid var(--border);
       text-align: left;
     }
-    .video-row td { padding: 11px 16px; border-bottom: 1px solid rgba(26,37,64,0.6); }
+    .video-row td { padding: 11px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); }
     .video-row:last-child td { border-bottom: none; }
     .video-row { transition: background 0.1s; }
     .video-row:hover { background: rgba(255,255,255,0.02); }
@@ -206,16 +242,17 @@
     /* ── Filter pills ── */
     .filter-pill {
       font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
-      padding: 5px 12px; border: 1px solid transparent;
+      padding: 5px 14px; border: 1px solid transparent;
+      border-radius: 9999px;
       color: var(--muted); cursor: pointer; transition: all 0.12s;
       text-transform: uppercase; font-family: 'Inter', sans-serif;
     }
-    .filter-pill:hover { color: var(--text); border-color: var(--border); }
-    .filter-pill.active { color: var(--teal); border-color: rgba(22,157,148,0.35); background: var(--teal-dim); }
+    .filter-pill:hover { color: var(--text); border-color: #333; background: #1a1a1a; }
+    .filter-pill.active { color: var(--green); border-color: rgba(33,197,96,0.35); background: var(--green-dim); }
 
     /* ── Log panel ── */
     #log-panel {
-      background: #030710;
+      background: #060810;
       border-top: 1px solid var(--border);
       height: 280px;
       overflow-y: auto;
@@ -234,6 +271,10 @@
     .dot-teal { background: var(--teal); animation: blink 1s ease-in-out infinite; }
     .dot-green { background: var(--green); animation: blink 3s ease-in-out infinite; }
     @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:.25;} }
+    @media (prefers-reduced-motion: reduce) {
+      .dot-teal, .dot-green { animation: none; }
+      .spinner { animation: none; }
+    }
 
     /* ── Spinner ── */
     .spinner {
@@ -274,10 +315,12 @@
       to   { opacity: 1; transform: translateY(0) scale(1); }
     }
     .modal {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; width: 100%; max-width: 520px; max-height: 90vh;
+      background: linear-gradient(160deg, #0f1220, #0a0c16);
+      border: 1px solid var(--border);
+      border-radius: 16px; width: 100%; max-width: 520px; max-height: 90vh;
       overflow-y: auto; padding: 28px;
       animation: modal-in .18s ease;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03);
     }
     .settings-group { margin-bottom: 20px; }
     .settings-group-title {
@@ -288,11 +331,11 @@
     .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
     .field label { font-size: 11px; font-weight: 600; color: var(--text); letter-spacing: 0.04em; }
     .field input {
-      background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
-      padding: 8px 10px; font-family: 'Inter Mono', monospace; font-size: 12px;
+      background: #060810; border: 1px solid var(--border); border-radius: 10px;
+      padding: 9px 12px; font-family: 'Inter Mono', monospace; font-size: 12px;
       color: var(--text); outline: none; transition: border-color .15s;
     }
-    .field input:focus { border-color: var(--teal); }
+    .field input:focus { border-color: var(--green); }
     .field .hint { font-size: 10px; color: var(--muted); }
     .input-wrap { position: relative; display: flex; }
     .input-wrap input { flex: 1; padding-right: 36px; }
@@ -304,28 +347,31 @@
     }
     .input-eye:hover { color: var(--text); }
     .gear-btn {
-      background: none; border: 1px solid var(--border); border-radius: 6px;
-      padding: 6px 8px; cursor: pointer; color: var(--muted);
-      display: flex; align-items: center; transition: color .15s, border-color .15s;
+      background: #181818; border: 1px solid #2d2d2d; border-radius: 9999px;
+      padding: 7px 10px; cursor: pointer; color: var(--muted);
+      display: flex; align-items: center; transition: color .15s, border-color .15s, background .15s;
     }
-    .gear-btn:hover { color: var(--text); border-color: var(--text); }
+    .gear-btn:hover { color: var(--text); border-color: #3a3a3a; background: #1e1e1e; }
     .modal-close-btn {
       background: none; border: none; cursor: pointer; color: var(--muted);
       width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
-      border-radius: 6px; font-size: 16px; transition: color .15s, background .15s;
+      border-radius: 9999px; font-size: 16px; transition: color .15s, background .15s;
     }
-    .modal-close-btn:hover { color: var(--text); background: var(--dim); }
+    .modal-close-btn:hover { color: var(--text); background: #1e1e1e; }
     #settings-saved {
       display: none; font-size: 11px; color: var(--green);
       font-weight: 600; letter-spacing: 0.04em;
     }
+
+    .log-toggle-btn { transition: background 0.15s; }
+    .log-toggle-btn:hover { background: rgba(255,255,255,0.02) !important; }
 
     /* ── Videos per day selector ── */
     .vpd-btn {
       width: 44px; height: 36px;
       background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
       color: var(--muted); cursor: pointer; font-family: 'Inter', sans-serif;
-      font-size: 14px; font-weight: 700; transition: all .15s;
+      font-size: 14px; font-weight: 700; transition: color .15s, border-color .15s, background .15s;
     }
     .vpd-btn:hover { color: var(--text); border-color: var(--muted); }
     .vpd-btn.vpd-active { background: var(--green-dim); border-color: var(--green); color: var(--green); }
@@ -339,14 +385,14 @@
 <body>
 
 <!-- ── HEADER ─────────────────────────────────────────────────────────────────── -->
-<div class="header-accent"></div>
 <header>
   <div style="max-width:1100px;margin:0 auto;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;">
     <div style="display:flex;align-items:center;gap:14px;">
-      <img src="/static/logo-icon.svg" alt="Blockchain.RIO" style="width:38px;height:38px;border-radius:8px;flex-shrink:0;" />
+      <img src="/static/logo-icon.svg" alt="Blockchain.RIO" width="38" height="38" style="border-radius:8px;flex-shrink:0;" />
       <div>
         <div id="brand-name" style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#f8fafc;text-transform:uppercase;">Blockchain.RIO</div>
         <div style="font-size:9px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);">Pipeline · Instagram → YouTube</div>
+        <div id="header-status" style="font-size:10px;color:var(--muted);margin-top:1px;display:none;" aria-live="polite"></div>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:24px;">
@@ -355,11 +401,11 @@
         <span id="running-label">Executando...</span>
       </div>
       <div style="display:flex;align-items:center;gap:7px;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">
-        <div class="dot dot-green"></div>
+        <div class="dot dot-green" aria-hidden="true"></div>
         <span id="last-updated">–</span>
       </div>
-      <button class="gear-btn" onclick="openSettings()" title="Configurações">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <button class="gear-btn" onclick="openSettings()" aria-label="Configurações">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
         </svg>
@@ -368,25 +414,41 @@
   </div>
 </header>
 
-<main style="max-width:1100px;margin:0 auto;padding:28px 24px;display:flex;flex-direction:column;gap:20px;">
+<main style="max-width:1100px;margin:0 auto;padding:32px 28px;display:flex;flex-direction:column;gap:16px;">
 
   <!-- ── STAT CARDS ────────────────────────────────────────────────────────────── -->
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
     <div class="stat-card blue-card">
-      <div class="stat-label">Aguardando</div>
+      <div class="stat-icon blue" aria-hidden="true">
+        <svg width="16" height="16" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 2v8l4 4"/><circle cx="12" cy="12" r="10"/><path d="M8 17l4 4 4-4m-4-5v9"/></svg>
+      </div>
+      <div class="stat-label">Aguardando Upload</div>
       <div id="stat-downloaded" class="stat-num blue-num mono">–</div>
+      <div class="stat-sub">vídeos coletados</div>
     </div>
     <div class="stat-card teal">
+      <div class="stat-icon teal" aria-hidden="true">
+        <svg width="16" height="16" fill="none" stroke="#169d94" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
       <div class="stat-label">Agendados</div>
       <div id="stat-scheduled" class="stat-num teal mono">–</div>
+      <div class="stat-sub">na fila do YouTube</div>
     </div>
     <div class="stat-card green">
+      <div class="stat-icon green" aria-hidden="true">
+        <svg width="16" height="16" fill="none" stroke="#21c560" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
       <div class="stat-label">Publicados</div>
       <div id="stat-uploaded" class="stat-num green mono">–</div>
+      <div class="stat-sub">no canal</div>
     </div>
     <div class="stat-card red">
+      <div class="stat-icon red" aria-hidden="true">
+        <svg width="16" height="16" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
       <div class="stat-label">Erros</div>
       <div id="stat-error" class="stat-num red mono">–</div>
+      <div class="stat-sub">requerem atenção</div>
     </div>
   </div>
 
@@ -400,13 +462,13 @@
       </div>
       <div style="padding:18px 20px;">
         <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          <button id="btn-collect" onclick="runTask('collect')" class="btn btn-teal">
-            <span id="icon-collect">↓</span>
+          <button id="btn-collect" onclick="runTask('collect')" class="btn btn-cta">
             <span id="label-collect">Coletar Instagram</span>
+            <span id="icon-collect" class="cta-box cta-box-green">↓</span>
           </button>
-          <button id="btn-upload" onclick="runTask('upload')" class="btn btn-teal">
-            <span id="icon-upload">↑</span>
+          <button id="btn-upload" onclick="runTask('upload')" class="btn btn-cta">
             <span id="label-upload">Upload YouTube</span>
+            <span id="icon-upload" class="cta-box cta-box-blue">↑</span>
           </button>
           <button id="btn-sync" onclick="runTask('sync')" class="btn btn-ghost">
             <span id="icon-sync">⟳</span>
@@ -429,8 +491,9 @@
       <div style="padding:16px 20px;border-bottom:1px solid var(--border);">
         <span class="section-label">Próxima Publicação</span>
       </div>
-      <div style="padding:18px 20px;flex:1;display:flex;align-items:center;min-width:0;overflow:hidden;">
-        <div id="next-publish" style="color:var(--muted);font-size:13px;min-width:0;width:100%;">Carregando...</div>
+      <div style="padding:18px 20px;flex:1;min-width:0;overflow:hidden;">
+        <div id="next-publish" style="color:var(--muted);font-size:13px;min-width:0;width:100%;">Carregando…</div>
+        <div id="upcoming-slots" style="margin-top:10px;display:flex;flex-direction:column;gap:0;"></div>
       </div>
       <div style="padding:14px 20px;border-top:1px solid var(--border);">
         <div style="display:flex;justify-content:space-between;margin-bottom:7px;">
@@ -469,7 +532,7 @@
         </thead>
         <tbody id="videos-body">
           <tr>
-            <td colspan="6" style="padding:48px 16px;text-align:center;font-size:12px;color:var(--muted);">Carregando vídeos...</td>
+            <td colspan="6" style="padding:48px 16px;text-align:center;font-size:12px;color:var(--muted);">Carregando vídeos…</td>
           </tr>
         </tbody>
       </table>
@@ -479,8 +542,8 @@
   <!-- ── LOG PANEL ─────────────────────────────────────────────────────────────── -->
   <div class="panel" style="overflow:hidden;">
     <button id="log-toggle" onclick="toggleLog()"
-      style="width:100%;padding:13px 20px;display:flex;align-items:center;justify-content:space-between;background:transparent;border:none;cursor:pointer;font-family:'Syne',sans-serif;color:var(--text);transition:background 0.15s;"
-      onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+      style="width:100%;padding:13px 20px;display:flex;align-items:center;justify-content:space-between;background:transparent;border:none;cursor:pointer;font-family:'Inter',sans-serif;color:var(--text);"
+      class="log-toggle-btn">
       <div style="display:flex;align-items:center;gap:10px;">
         <span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">Log em Tempo Real</span>
         <div id="log-dot" class="dot dot-teal hidden"></div>
@@ -499,24 +562,24 @@
   <div class="modal">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
       <div style="font-size:14px;font-weight:800;letter-spacing:0.04em;color:#f8fafc;">Configurações</div>
-      <button class="modal-close-btn" onclick="closeSettings()" title="Fechar (Esc)">✕</button>
+      <button class="modal-close-btn" onclick="closeSettings()" aria-label="Fechar configurações">✕</button>
     </div>
 
     <div class="settings-group">
       <div class="settings-group-title">Branding</div>
       <div class="field">
-        <label>Nome do projeto</label>
-        <input id="s-brand-name" type="text" placeholder="My Pipeline" />
+        <label for="s-brand-name">Nome do projeto</label>
+        <input id="s-brand-name" name="brand_name" type="text" autocomplete="off" placeholder="My Pipeline…" />
         <span class="hint">Exibido no cabeçalho do dashboard</span>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div class="field">
-          <label>Iniciais do logo</label>
-          <input id="s-brand-logo" type="text" placeholder="YT" maxlength="4" />
+          <label for="s-brand-logo">Iniciais do logo</label>
+          <input id="s-brand-logo" name="brand_logo" type="text" autocomplete="off" placeholder="BR" maxlength="4" />
         </div>
         <div class="field">
-          <label>Título da aba</label>
-          <input id="s-title" type="text" placeholder="Instagram → YouTube Pipeline" />
+          <label for="s-title">Título da aba</label>
+          <input id="s-title" name="page_title" type="text" autocomplete="off" placeholder="Instagram → YouTube Pipeline…" />
         </div>
       </div>
     </div>
@@ -524,15 +587,15 @@
     <div class="settings-group">
       <div class="settings-group-title">Instagram</div>
       <div class="field">
-        <label>Perfil alvo</label>
-        <input id="s-ig-profile" type="text" placeholder="nome_do_perfil" />
+        <label for="s-ig-profile">Perfil alvo</label>
+        <input id="s-ig-profile" name="ig_profile" type="text" autocomplete="off" spellcheck="false" placeholder="blockchainrio" />
         <span class="hint">Sem o @ — ex: blockchainrio</span>
       </div>
       <div class="field">
-        <label>Session ID</label>
+        <label for="s-session-id">Session ID</label>
         <div class="input-wrap">
-          <input id="s-session-id" type="password" placeholder="••••••••••••••••" />
-          <button class="input-eye" type="button" onclick="toggleSessionVisibility()" title="Mostrar/ocultar">
+          <input id="s-session-id" name="session_id" type="password" autocomplete="current-password" spellcheck="false" placeholder="••••••••••••••••" />
+          <button class="input-eye" type="button" onclick="toggleSessionVisibility()" aria-label="Mostrar/ocultar session ID">
             <svg id="eye-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
             </svg>
@@ -760,6 +823,7 @@ async function refreshVideos() {
     const r = await fetch('/api/videos');
     state.videos = await r.json();
     renderTable();
+    renderUpcomingSlots(state.videos);
   } catch (e) { /* ignore */ }
 }
 
@@ -875,6 +939,9 @@ function applyStatus(d) {
     npEl.innerHTML = '<span style="color:var(--muted);font-size:13px;font-weight:600;">Nenhum agendado</span>';
   }
 
+  // Header status summary
+  updateHeaderStatus(d);
+
   // Running state
   const runInd    = document.getElementById('running-indicator');
   const taskBanner = document.getElementById('task-banner');
@@ -904,6 +971,45 @@ function applyStatus(d) {
       ['collect','upload','sync','retry-errors'].forEach(t => resetBtnLoading(t));
     }
   }
+}
+
+function updateHeaderStatus(d) {
+  const el = document.getElementById('header-status');
+  if (!el) return;
+  const parts = [];
+  if (d.uploaded > 0)    parts.push(`${d.uploaded} publicados`);
+  if (d.downloaded > 0)  parts.push(`${d.downloaded} na fila`);
+  if (d.scheduled > 0)   parts.push(`${d.scheduled} agendados`);
+  if (d.error > 0)       parts.push(`${d.error} com erro`);
+  if (parts.length) {
+    el.textContent = parts.join(' · ');
+    el.style.display = 'block';
+  }
+}
+
+function renderUpcomingSlots(videos) {
+  const el = document.getElementById('upcoming-slots');
+  if (!el) return;
+  const now = Date.now();
+  const upcoming = videos
+    .filter(v => v.status === 'scheduled' && v.youtube_publish_at)
+    .map(v => ({ ...v, ts: new Date(v.youtube_publish_at).getTime() }))
+    .filter(v => v.ts > now)
+    .sort((a, b) => a.ts - b.ts)
+    .slice(0, 4);
+
+  if (!upcoming.length) { el.innerHTML = ''; return; }
+
+  el.innerHTML = upcoming.map((v, i) => {
+    const dt = new Date(v.ts);
+    const d  = dt.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+    const t  = dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const code = v.shortcode ? v.shortcode.slice(0, 8) + '…' : '—';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;${i > 0 ? 'border-top:1px solid var(--border);' : ''}">
+      <span style="color:var(--muted);font-size:10px;font-family:'Inter Mono',monospace;">${d} · ${t}</span>
+      <span style="font-size:10px;color:var(--text);font-family:'Inter Mono',monospace;opacity:0.6;">${code}</span>
+    </div>`;
+  }).join('');
 }
 
 // ── Table ─────────────────────────────────────────────────────────────────────
